@@ -1,0 +1,51 @@
+import java.util.HashMap;
+
+public class Cine {
+  public static double calcularPrecioBoletas(String tipoSala, int numBoletas, String horaFuncion, String tipoPago, boolean reserva) {
+    // Precios básicos de las salas
+    HashMap<String, Double> precios = new HashMap<String, Double>();
+    precios.put("Dinamix", 18800.0);
+    precios.put("3D", 15500.0);
+    precios.put("2D", 11300.0);
+
+    // Descuentos y recargos según las promociones
+    final double descuentoHoraNoPico = 0.1;
+    final double descuentoPorCantidad = 500.0;
+    final double recargoPorReserva = 2000.0;
+    final double descuentoTarjetaCinema = 0.05;
+    final double recargoHoraPico3D2D = 0.25;
+    final double recargoHoraPicoDinamix = 0.5;
+
+    // Aplicar descuentos y recargos según las promociones
+    double precio = precios.get(tipoSala);
+    if (horaFuncion.equals("hora no pico")) {
+      precio *= (1 - descuentoHoraNoPico);
+      if (numBoletas >= 3) {
+        precio -= descuentoPorCantidad * (numBoletas - 2);
+      }
+    } else {
+      if (tipoSala.equals("3D") || tipoSala.equals("2D")) {
+        precio *= (1 + recargoHoraPico3D2D);
+      } else {
+        precio *= (1 + recargoHoraPicoDinamix);
+      }
+    }
+
+    if (tipoPago.equals("tarjeta del cinema")) {
+      precio *= (1 - descuentoTarjetaCinema);
+    }
+
+    if (reserva) {
+      precio += recargoPorReserva;
+    }
+
+    // Retornar el precio total por todas las boletas
+    return precio * numBoletas;
+  }
+
+  public static void main(String[] args) {
+    // Ejemplo de uso de la función
+    double precio = calcularPrecioBoletas("Dinamix", 4, "hora no pico", "otros medios de pago", true);
+    System.out.println("El precio total por las 4 boletas es: " + precio);
+  }
+}
